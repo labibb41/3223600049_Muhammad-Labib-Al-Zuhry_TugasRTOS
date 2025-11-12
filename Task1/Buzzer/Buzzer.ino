@@ -1,21 +1,55 @@
-#define BUZZ_PIN 6
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
 
-void TaskBuzzer(void *pvParameters) {
-  pinMode(BUZZ_PIN, OUTPUT);
+// Pin buzzer
+#define BUZZER1_PIN 8
+#define BUZZER2_PIN 9
 
-  while (1) {
-    tone(BUZZ_PIN, 1000);
-    vTaskDelay(300 / portTICK_PERIOD_MS);
+// ---------------------------------------------------------------------
+// Task 1 – Buzzer 1 di Core 0
+// ---------------------------------------------------------------------
+void task_buzzer1(void *pvParameter) {
+    gpio_set_direction(BUZZER1_PIN, GPIO_MODE_OUTPUT);
 
-    noTone(BUZZ_PIN);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-  }
+    while (1) {
+        // Bunyi
+        gpio_set_level(BUZZER1_PIN, 1);
+        printf("[Core %d] Buzzer 1 ON\n", xPortGetCoreID());
+        vTaskDelay(pdMS_TO_TICKS(200));  // durasi beep 200 ms
+
+        // Diam
+        gpio_set_level(BUZZER1_PIN, 0);
+        printf("[Core %d] Buzzer 1 OFF\n", xPortGetCoreID());
+        vTaskDelay(pdMS_TO_TICKS(500));  // jeda antar beep
+    }
 }
 
-void setup() {
-  // pilih core
-  //xTaskCreatePinnedToCore(TaskBuzzer, "BUZZ", 2048, NULL, 1, NULL, 0); // core 0
-  xTaskCreatePinnedToCore(TaskBuzzer, "BUZZ", 2048, NULL, 1, NULL, 1); // core 1
+// ---------------------------------------------------------------------
+// Task 2 – Buzzer 2 di Core 1
+// ---------------------------------------------------------------------
+void task_buzzer2(void *pvParameter) {
+    gpio_set_direction(BUZZER2_PIN, GPIO_MODE_OUTPUT);
+
+    while (1) {
+        gpio_set_level(BUZZER2_PIN, 1);
+        printf("[Core %d] Buzzer 2 ON\n", xPortGetCoreID());
+        vTaskDelay(pdMS_TO_TICKS(300));  // durasi beep 300 ms
+
+        gpio_set_level(BUZZER2_PIN, 0);
+        printf("[Core %d] Buzzer 2 OFF\n", xPortGetCoreID());
+        vTaskDelay(pdMS_TO_TICKS(800));  // jeda antar beep
+    }
 }
 
-void loop() {}
+// ---------------------------------------------------------------------
+// Fungsi utama RTOS
+// ---------------------------------------------------------------------
+void app_main() {
+    printf("=== FreeRTOS Dual Core Buzzer Test (ESP32-S3) ===\n");
+
+    // Membuat task dan menetapkan ke core tertentu
+    xTaskCreatePinnedToCore(task_buzzer1, "Buzzer1 Task", 2048, NULL, 1, NULL, 0); // Core 0
+    xTaskCreatePinnedToCore(task_buzzer2, "Buzzer2 Task", 2048, NULL, 1, NULL, 1); // Core 1
+}
