@@ -1,72 +1,40 @@
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "driver/gpio.h"
-
-// Definisi pin LED
-#define LED1_PIN 5
-#define LED2_PIN 6
-#define LED3_PIN 7
-
-// ---------------------------------------------------------------------
-// Task 1 - LED1 di Core 0 (300 ms)
-// ---------------------------------------------------------------------
-void task_led1(void *pvParameter) {
-    gpio_set_direction(LED1_PIN, GPIO_MODE_OUTPUT);
-
-    while (1) {
-        gpio_set_level(LED1_PIN, 1);
-        printf("[Core %d] LED1 ON\n", xPortGetCoreID());
-        vTaskDelay(pdMS_TO_TICKS(300));
-
-        gpio_set_level(LED1_PIN, 0);
-        printf("[Core %d] LED1 OFF\n", xPortGetCoreID());
-        vTaskDelay(pdMS_TO_TICKS(300));
+{
+  "version": 1,
+  "author": "Muhammad labib Al zuhry_49",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": { "builder": "esp-idf" }
+    },
+    { "type": "wokwi-led", "id": "led1", "top": 15.6, "left": -53.8, "attrs": { "color": "red" } },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 25.2,
+      "left": -92.2,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 34.8,
+      "left": -130.6,
+      "attrs": { "color": "limegreen" }
     }
-}
-
-// ---------------------------------------------------------------------
-// Task 2 - LED2 di Core 1 (500 ms)
-// ---------------------------------------------------------------------
-void task_led2(void *pvParameter) {
-    gpio_set_direction(LED2_PIN, GPIO_MODE_OUTPUT);
-
-    while (1) {
-        gpio_set_level(LED2_PIN, 1);
-        printf("[Core %d] LED2 ON\n", xPortGetCoreID());
-        vTaskDelay(pdMS_TO_TICKS(500));
-
-        gpio_set_level(LED2_PIN, 0);
-        printf("[Core %d] LED2 OFF\n", xPortGetCoreID());
-        vTaskDelay(pdMS_TO_TICKS(500));
-    }
-}
-
-// ---------------------------------------------------------------------
-// Task 3 - LED3 di Core 0 (1000 ms)
-// ---------------------------------------------------------------------
-void task_led3(void *pvParameter) {
-    gpio_set_direction(LED3_PIN, GPIO_MODE_OUTPUT);
-
-    while (1) {
-        gpio_set_level(LED3_PIN, 1);
-        printf("[Core %d] LED3 ON\n", xPortGetCoreID());
-        vTaskDelay(pdMS_TO_TICKS(1000));
-
-        gpio_set_level(LED3_PIN, 0);
-        printf("[Core %d] LED3 OFF\n", xPortGetCoreID());
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-}
-
-// ---------------------------------------------------------------------
-// app_main() - Titik awal program FreeRTOS ESP-IDF
-// ---------------------------------------------------------------------
-void app_main() {
-    printf("=== FreeRTOS Dual Core LED Test (ESP32-S3) ===\n");
-
-    // Membuat task dan memetakan ke core tertentu
-    xTaskCreatePinnedToCore(task_led1, "LED1 Task", 2048, NULL, 1, NULL, 0); // Core 0
-    xTaskCreatePinnedToCore(task_led2, "LED2 Task", 2048, NULL, 1, NULL, 1); // Core 1
-    xTaskCreatePinnedToCore(task_led3, "LED3 Task", 2048, NULL, 1, NULL, 0); // Core 0
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "led1:A", "esp:4", "green", [ "v0" ] ],
+    [ "esp:5", "led2:A", "green", [ "h0" ] ],
+    [ "esp:6", "led3:A", "green", [ "h0" ] ],
+    [ "led1:C", "esp:GND.1", "green", [ "v0" ] ],
+    [ "led2:C", "esp:GND.1", "green", [ "v0" ] ],
+    [ "led3:C", "esp:GND.1", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
 }
