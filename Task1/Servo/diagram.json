@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "author": "Muhammad labib Al zuhry_49",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": -0.18,
+      "left": 4.57,
+      "attrs": { "builder": "esp-idf" }
+    },
+    { "type": "wokwi-servo", "id": "servo1", "top": 265, "left": 87.4, "rotate": 90, "attrs": {} },
+    {
+      "type": "wokwi-servo",
+      "id": "servo2",
+      "top": 265,
+      "left": -133.4,
+      "rotate": 90,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.4", "servo1:GND", "black", [ "h90.97", "v19.02" ] ],
+    [ "servo2:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "servo1:V+", "esp:5V", "red", [ "v0" ] ],
+    [ "servo2:V+", "esp:5V", "red", [ "v0" ] ],
+    [ "servo2:PWM", "esp:14", "gold", [ "v-28.8", "h67" ] ],
+    [ "esp:19", "servo1:PWM", "gold", [ "v-0.18", "h62.17" ] ]
+  ],
+  "dependencies": {}
+}
