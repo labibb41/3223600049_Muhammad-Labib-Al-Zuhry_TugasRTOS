@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "author": "Muhammad labib Al zuhry_49",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 85.1, "left": -125, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot2", "top": 37.1, "left": 153.4, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "pot1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "esp:5V", "pot1:VCC", "red", [ "h0" ] ],
+    [ "pot1:SIG", "esp:1", "green", [ "v19.2", "h210.8", "v-115.2" ] ],
+    [ "esp:5V", "pot2:VCC", "red", [ "h0" ] ],
+    [ "esp:GND.1", "pot2:GND", "black", [ "h0" ] ],
+    [ "pot2:SIG", "esp:2", "green", [ "h-67.6", "v-47.82" ] ]
+  ],
+  "dependencies": {}
+}
